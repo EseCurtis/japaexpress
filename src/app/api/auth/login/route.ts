@@ -51,7 +51,7 @@ routeHandler.addRoute(
         const token = jwt.sign(
             authUser,
             process.env.JWT_SECRET || "NO_JWT",
-            { expiresIn: "1h" }
+            { expiresIn: "24h" }
         );
 
         // Return a success response with the JWT token

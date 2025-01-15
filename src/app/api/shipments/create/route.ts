@@ -1,4 +1,5 @@
 import database from "@/app/config/database";
+import { sendEmail } from "@/utils/email-service";
 import { stripSensitiveProperties } from "@/utils/helpers";
 import { createShipmentSchema } from "@/utils/request-schemas";
 import RouteHandler from "@/utils/route-handler";
@@ -69,6 +70,24 @@ routeHandler.addRoute(
                     managerId: userId,
                     companyId,
                 }
+            });
+
+            // Send email to delivery partner
+            if (assignedDeliveryPartner) {
+                await sendEmail({
+                    to: assignedDeliveryPartner.email,
+                    subject: "New Shipment Assigned",
+                    text: `A new shipment has been assigned to you. Shipment ID: ${createdShipment.uuid}.`,
+                    html: `<p>A new shipment has been assigned to you. Shipment ID: <strong>${createdShipment.uuid}</strong>.</p>`,
+                });
+            }
+
+            // Send email to customer
+            await sendEmail({
+                to: customer.email,
+                subject: "Shipment Created",
+                text: `Your shipment has been created successfully. Shipment ID: ${createdShipment.uuid}.`,
+                html: `<p>Your shipment has been created successfully. Shipment ID: <strong>${createdShipment.uuid}</strong>.</p>`,
             });
 
 

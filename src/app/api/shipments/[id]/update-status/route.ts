@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import database from "@/app/config/database";
+import { sendEmail } from "@/utils/email-service";
 import { updateShipmentStatusSchema } from "@/utils/request-schemas";
 import RouteHandler from "@/utils/route-handler";
 import { UserRole } from "@prisma/client";
@@ -23,11 +24,15 @@ routeHandler.addRoute(
             // Check if the shipment exists
             const shipment = await database.shipments.findUnique({
                 where: { uuid: shipmentId, companyId: companyId! },
+                include: {
+                    manager: true
+                }
             });
 
             if (!shipment) {
                 return { msg: "Shipment not found", status: 404 };
             }
+
 
 
 
@@ -38,6 +43,36 @@ routeHandler.addRoute(
                     status: status || shipment.status
                 }
             });
+
+            // Notify the customer and manager of the update
+            const customerEmail = shipment.customersEmail;
+            const managerEmail = shipment.manager?.email;
+
+            const emailPromises = [];
+
+            if (customerEmail) {
+                emailPromises.push(
+                    sendEmail({
+                        to: customerEmail,
+                        subject: "Shipment Status Update",
+                        text: `Your shipment status has been updated to: ${status}.`,
+                        html: `<p>Your shipment status has been updated to: <strong>${status}</strong>.</p>`,
+                    })
+                );
+            }
+
+            if (managerEmail) {
+                emailPromises.push(
+                    sendEmail({
+                        to: managerEmail,
+                        subject: "Shipment Status Update",
+                        text: `The shipment status has been updated to: ${status}.`,
+                        html: `<p>The shipment status has been updated to: <strong>${status}</strong>.</p>`,
+                    })
+                );
+            }
+
+            await Promise.all(emailPromises);
 
             return {
                 msg: "Shipment status updated successfully",

@@ -54,6 +54,30 @@ model Users {
   customerShipments Shipments[] @relation("CustomerRelation")
   customerFeedbacks Feedbacks[]
 
+  confirmations Confirmations[]
+
+  isConfirmed Boolean @default(false)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+enum ConfirmationScope {
+  ACCOUNT
+  EMAIL_UPDATE
+}
+
+model Confirmations {
+  id   String @id @default(auto()) @map("_id") @db.ObjectId
+  uuid String @unique @default(uuid())
+
+  user    Users  @relation(fields: [userId], references: [uuid])
+  userId String
+
+  otp   Int               @unique
+  scope ConfirmationScope @default(ACCOUNT)
+
+  expiresAt DateTime
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
@@ -84,12 +108,12 @@ model Shipments {
   assignedDeliveryPartner   Users?  @relation("DeliveryPartnerRelation", fields: [assignedDeliveryPartnerId], references: [uuid])
 
   customersEmail String?
-  customer      Users?  @relation("CustomerRelation", fields: [customersEmail], references: [email])
+  customer       Users?  @relation("CustomerRelation", fields: [customersEmail], references: [email])
 
   companyId String
   company   Companies @relation(fields: [companyId], references: [uuid])
 
-  logs     ShipmentLogs[]
+  logs      ShipmentLogs[]
   feedbacks Feedbacks[]
 
   createdAt DateTime @default(now())

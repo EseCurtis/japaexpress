@@ -17,13 +17,23 @@ export const registerCompanySchema = z.object({
     name: z.string().min(1, "Company name is required"),
     address: z.string().min(1, "Company Address is required"),
     phone: z.string().min(1, "Company phone is required"),
-    email: z.string().email("Invalid email format"),
 });
 
 // Login schema
 export const loginSchema = z.object({
     email: z.string().email("Invalid email format"),
     password: z.string().min(8, "Password should have at least 8 characters"),
+});
+
+// request confirmation schema
+export const requestConfirmationSchema = z.object({
+    email: z.string().email("Invalid email format"),
+});
+
+// Confirm account schema
+export const confirmAccountSchema = z.object({
+    email: z.string().email("Invalid email format"),
+    otp: z.number().min(8, "Password should have at least 8 characters"),
 });
 
 // Role assignment schema
@@ -102,4 +112,8 @@ export const basePaginationSchema = z.object({
 
 export const userListSchema = z.object({
     role: z.enum(Object.values(UserRole) as [UserRole])
+})
+
+export const emailCheckSchema = z.object({
+    email: z.string().email("Invalid email format"),
 })

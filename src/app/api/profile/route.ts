@@ -1,4 +1,4 @@
- 
+
 import database from "@/app/config/database";
 import RouteHandler from "@/utils/route-handler";
 import { UserRole } from "@prisma/client";
@@ -7,10 +7,9 @@ import { z } from "zod";
 
 const routeHandler = new RouteHandler();
 
-// Add route for retrieving user bio data
 routeHandler.addRoute(
     z.object({}),
-    async (req: NextRequest, body, {}, authUser) => {
+    async (req: NextRequest, body, { }, authUser) => {
         try {
             const { userId } = authUser!;
 
@@ -25,7 +24,7 @@ routeHandler.addRoute(
                     status: 404,
                 };
             }
-            
+
             const sanitizedUser = {
                 uuid: matchedUser.uuid,
                 firstName: matchedUser.firstName,

@@ -1,4 +1,5 @@
 import database from "@/app/config/database";
+import { sendEmail } from "@/utils/email-service";
 import { stripSensitiveProperties } from "@/utils/helpers";
 import { registerUserSchema } from "@/utils/request-schemas";
 import RouteHandler from "@/utils/route-handler";
@@ -37,6 +38,14 @@ routeHandler.addRoute(
                     role,
                     passwordHash,
                 },
+            });
+
+            // Send email to new user
+            await sendEmail({
+                to: createdUser.email,
+                subject: "Welcome to JapaExpress",
+                text: `Hello ${createdUser.firstName},\n\nThank you for registering at JapaExpress. We are excited to have you on board.`,
+                html: `<p>Hello ${createdUser.firstName},</p><p>Thank you for registering at JapaExpress. We are excited to have you on board.</p>`,
             });
 
             return {
