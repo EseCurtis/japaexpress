@@ -22,16 +22,16 @@ routeHandler.addRoute(
 
             // Filters
             const statuses = searchParams.get("status")?.split(",") || []; // Comma-separated statuses
-            const deliveryPartnerId = searchParams.get("deliveryPartnerId") || undefined;
-            const customerId = searchParams.get("customerId") || undefined;
+            const driversEmail = searchParams.get("driversEmail") || undefined;
+            const customersEmail = searchParams.get("customersEmail") || undefined;
             const search = searchParams.get("search") || ""; // Search query
 
             // Build the `where` condition for Prisma
             const where: any = {
                 companyId: companyId!, // Filter by company ID
                 ...(statuses.length > 0 && { status: { in: statuses } }), // Filter by statuses
-                ...(deliveryPartnerId && { assignedDeliveryPartnerId: deliveryPartnerId }), // Filter by delivery partner
-                ...(customerId && { customerId }), // Filter by customer ID
+                ...(driversEmail && { driversEmail: driversEmail }), // Filter by delivery partner
+                ...(customersEmail && { customersEmail }), // Filter by customer ID
                 ...(search && {
                     OR: [
                         { description: { contains: search, mode: "insensitive" } }, // Match description

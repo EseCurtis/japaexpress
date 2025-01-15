@@ -13,40 +13,10 @@ routeHandler.addRoute(
     async (req: NextRequest, body, { }, authUser) => {
         const { userId } = authUser!;
 
-        const { pickupAddress, deliveryAddress, description, customerId, assignedDeliveryPartnerId, companyId } = body;
+        const { pickupAddress, deliveryAddress, description, customerEmail, driverEmail, companyId } = body;
 
         try {
-            console.log("Received request body:", body);
-
-            // Check if the customer exists
-            const customer = await database.users.findUnique({
-                where: {
-                    uuid: customerId,
-                    role: UserRole.CUSTOMER,
-                },
-            });
-
-            if (!customer) {
-                console.log("Customer with this email not found");
-                return { msg: "Customer with this email not found", status: 404 };
-            }
-
-            // Check if the assigned delivery partner exists
-            let assignedDeliveryPartner = null;
-            if (assignedDeliveryPartnerId) {
-                assignedDeliveryPartner = await database.users.findUnique({
-                    where: {
-                        uuid: assignedDeliveryPartnerId,
-                        role: UserRole.DELIVERY_PARTNER,
-                    },
-                });
-
-                if (!assignedDeliveryPartner) {
-                    console.log("Assigned delivery partner not found");
-                    return { msg: "Assigned delivery partner not found", status: 404 };
-                }
-            }
-
+           
             // Check if the company exists
             const company = await database.companies.findUnique({
                 where: {
@@ -64,18 +34,18 @@ routeHandler.addRoute(
                     pickupAddress,
                     deliveryAddress,
                     description,
-                    customersEmail: customer.email,
+                    customersEmail: customerEmail,
                     status: "PENDING", // Default status
-                    assignedDeliveryPartnerId: assignedDeliveryPartner ? assignedDeliveryPartner.uuid : null,
+                    driversEmail: driverEmail,
                     managerId: userId,
                     companyId,
                 }
             });
 
             // Send email to delivery partner
-            if (assignedDeliveryPartner) {
+            if (driverEmail) {
                 await sendEmail({
-                    to: assignedDeliveryPartner.email,
+                    to: driverEmail,
                     subject: "New Shipment Assigned",
                     text: `A new shipment has been assigned to you. Shipment ID: ${createdShipment.uuid}.`,
                     html: `<p>A new shipment has been assigned to you. Shipment ID: <strong>${createdShipment.uuid}</strong>.</p>`,
@@ -84,7 +54,7 @@ routeHandler.addRoute(
 
             // Send email to customer
             await sendEmail({
-                to: customer.email,
+                to: customerEmail,
                 subject: "Shipment Created",
                 text: `Your shipment has been created successfully. Shipment ID: ${createdShipment.uuid}.`,
                 html: `<p>Your shipment has been created successfully. Shipment ID: <strong>${createdShipment.uuid}</strong>.</p>`,
@@ -102,7 +72,7 @@ routeHandler.addRoute(
         }
     },
     "POST",
-    [UserRole.MANAGER]
+    [UserRole.MANAGER, UserRole.CUSTOMER]
 );
 
 export async function POST(req: NextRequest) {

@@ -20,11 +20,8 @@ routeHandler.addRoute(
             const shipment = await database.shipments.findUnique({
                 where: { uuid: shipmentId, companyId: companyId! },
                 include: {
-                    customer: true,
                     logs: true,
-                    assignedDeliveryPartner: true,
-                    manager: true,
-                    feedbacks: true
+                    manager: true
                 }
             });
 

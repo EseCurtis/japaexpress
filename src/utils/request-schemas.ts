@@ -48,9 +48,9 @@ export const assignRoleSchema = z.object({
 export const createShipmentSchema = z.object({
     pickupAddress: z.string().min(1, "Pickup address is required"),
     deliveryAddress: z.string().min(1, "Delivery address is required"),
-    customerId: z.string().uuid("Invalid customer ID format"),
+    customerEmail: z.string().email("Invalid customer ID format"),
     description: z.string().min(10, "Description length must be greater than 10 characters "),
-    assignedDeliveryPartnerId: z.string().uuid("Invalid delivery partner ID format"),
+    driverEmail: z.string().email("Invalid customer ID format"),
     companyId: z.string().uuid("Invalid company ID format"),
 });
 
@@ -58,9 +58,9 @@ export const createShipmentSchema = z.object({
 export const updateShipmentSchema = z.object({
     pickupAddress: z.string().optional(),
     deliveryAddress: z.string().optional(),
-    customerId: z.string().email("Invalid customer ID format").optional(),
+    customerEmail: z.string().email("Invalid customer ID format").optional(),
     description: z.string().min(10, "Description length must be greater than 10 characters ").optional(),
-    assignedDeliveryPartnerId: z.string().uuid("Invalid delivery partner ID format").optional(),
+    driverEmail:  z.string().email("Invalid customer ID format").optional(),
     status: z.enum(Object.values(ShipmentStatus) as [ShipmentStatus]).optional()
 });
 

@@ -1,8 +1,9 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import database from "@/app/config/database";
+import { sendEmail } from "@/utils/email-service";
 import { updateShipmentSchema } from "@/utils/request-schemas";
 import RouteHandler from "@/utils/route-handler";
-import { UserRole, Users } from "@prisma/client";
+import { UserRole } from "@prisma/client";
 import { NextRequest } from "next/server";
 
 const routeHandler = new RouteHandler();
@@ -17,15 +18,12 @@ routeHandler.addRoute(
             pickupAddress,
             deliveryAddress,
             description,
-            customerId,
-            assignedDeliveryPartnerId,
+            customerEmail,
+            driverEmail,
             status
         } = body;
 
         try {
-
-
-
             // Check if the shipment exists
             const shipment = await database.shipments.findUnique({
                 where: { uuid: shipmentId, companyId: companyId! },
@@ -33,21 +31,6 @@ routeHandler.addRoute(
 
             if (!shipment) {
                 return { msg: "Shipment not found", status: 404 };
-            }
-
-            let customer: Users | null = null
-
-            if (customerId) {
-                customer = await database.users.findUnique({
-                    where: {
-                        uuid: customerId,
-                        role: UserRole.CUSTOMER
-                    },
-                });
-
-                if (!customer) {
-                    return { msg: "Customer not found", status: 404 };
-                }
             }
 
 
@@ -58,10 +41,25 @@ routeHandler.addRoute(
                     pickupAddress: pickupAddress || shipment.pickupAddress,
                     deliveryAddress: deliveryAddress || shipment.deliveryAddress,
                     description: description || shipment.description,
-                    customersEmail: customer ? customer.email : shipment.customersEmail,
-                    assignedDeliveryPartnerId: assignedDeliveryPartnerId || shipment.assignedDeliveryPartnerId,
+                    customersEmail: customerEmail,
+                    driversEmail: driverEmail,
                     status: status || shipment.status
                 }
+            });
+
+            // Notify the stakeholders of the change
+            await sendEmail({
+                to: shipment.customersEmail!,
+                subject: "Shipment Status Update",
+                text: `The shipment status has been updated to: ${status}.`,
+                html: `<p>The shipment status has been updated to: <strong>${status}</strong>.</p>`,
+            });
+
+            await sendEmail({
+                to: shipment.driversEmail!,
+                subject: "Shipment Status Update",
+                text: `The shipment status has been updated to: ${status}.`,
+                html: `<p>The shipment status has been updated to: <strong>${status}</strong>.</p>`,
             });
 
             return {
