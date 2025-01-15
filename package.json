@@ -7,18 +7,24 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "db:sync": "prisma generate && prisma db push"
+    "db:sync": "prisma generate && prisma db push",
+    "migrate": "prisma migrate dev"
   },
   "dependencies": {
     "@prisma/client": "^6.2.1",
     "@tanstack/react-query": "^5.64.1",
     "@tanstack/react-query-devtools": "^5.64.1",
+    "bcryptjs": "^2.4.3",
+    "jsonwebtoken": "^9.0.2",
     "next": "15.1.4",
     "react": "^19.0.0",
-    "react-dom": "^19.0.0"
+    "react-dom": "^19.0.0",
+    "zod": "^3.24.1"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3",
+    "@types/bcryptjs": "^2.4.6",
+    "@types/jsonwebtoken": "^9.0.7",
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
