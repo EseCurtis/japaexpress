@@ -9,6 +9,92 @@ generator client {
 }
 
 datasource db {
-  provider = "postgresql"
+  provider = "mongodb"
   url      = env("DATABASE_URL")
+}
+
+enum UserRole {
+  MANAGER
+  DELIVERY_PARTNER
+  CLIENT
+}
+
+model Companies {
+  id   String @id @map("_id")
+  uuid String @unique @default(uuid())
+
+  name    String
+  address String
+  phone   String
+
+  users     Users[]
+  shipments Shipments[]
+
+  createdAt    DateTime       @default(now())
+  updatedAt    DateTime       @updatedAt
+  ShipmentLogs ShipmentLogs[]
+}
+
+model Users {
+  id   String   @id @map("_id")
+  uuid String   @unique @default(uuid())
+  role UserRole @default(CLIENT)
+
+  firstName    String
+  lastName     String
+  email        String @unique
+  passwordHash String
+
+  companyId String
+  company   Companies @relation(fields: [companyId], references: [id])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+enum ShipmentStatus {
+  PENDING // Shipment is created but not yet processed
+  PICKED // Shipment has been picked up
+  IN_TRANSIT // Shipment is on the way to its destination
+  DELIVERED // Shipment has been delivered to the recipient
+  RETURNED // Shipment was returned to the sender
+  CANCELLED // Shipment was cancelled before processing
+  FAILED // Shipment failed to be delivered (e.g., due to address issues)
+}
+
+model Shipments {
+  id   String @id @map("_id")
+  uuid String @unique @default(uuid())
+
+  origin      String
+  destination String
+  status      ShipmentStatus @default(PENDING)
+
+  companyId String
+  Company   Companies @relation(fields: [companyId], references: [id])
+
+  logs ShipmentLogs[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model ShipmentLogs {
+  id   String @id @map("_id")
+  uuid String @unique @default(uuid())
+
+  latitude  String
+  longitude String
+  timestamp DateTime       @default(now())
+  status    ShipmentStatus @default(PENDING)
+  error     String
+
+  companyId String
+  Company   Companies @relation(fields: [companyId], references: [id])
+
+  shipmentId String
+  Shipment   Shipments @relation(fields: [shipmentId], references: [id])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
