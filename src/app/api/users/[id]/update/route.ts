@@ -1,21 +1,23 @@
 
 import database from "@/app/config/database";
-import { updateProfileSchema } from "@/utils/request-schemas";
+import { updateUserSchema } from "@/utils/request-schemas";
 import RouteHandler from "@/utils/route-handler";
 import { UserRole } from "@prisma/client";
 import { NextRequest } from "next/server";
 
 const routeHandler = new RouteHandler();
 
+
 routeHandler.addRoute(
-    updateProfileSchema,
+    updateUserSchema,
     async (req: NextRequest, body, { }, authUser) => {
         try {
-            const { userId } = authUser!;
-            const { firstName, lastName } = body;
+            const { userId, companyId } = authUser!;
+            const { firstName, lastName, role } = body;
 
+            // Validate and fetch user data
             const matchedUser = await database.users.findUnique({
-                where: { uuid: userId },
+                where: { uuid: userId, companyId: companyId! },
             });
 
             if (!matchedUser) {
@@ -33,6 +35,7 @@ routeHandler.addRoute(
                 data: {
                     firstName: firstName || matchedUser.firstName,
                     lastName: lastName || matchedUser.lastName,
+                    role: role || matchedUser.role,
                 },
             });
 
@@ -48,11 +51,11 @@ routeHandler.addRoute(
             };
 
             return {
-                msg: "User profile updated successfully",
+                msg: "User updated successfully",
                 data: sanitizedUser,
             };
         } catch (error) {
-            console.error("Error updating user profile:", error);
+            console.error("Error updating user:", error);
             return {
                 msg: "Internal server error",
                 status: 500,
@@ -60,7 +63,7 @@ routeHandler.addRoute(
         }
     },
     "PUT", // Use PUT method for updating resources
-    [UserRole.CUSTOMER, UserRole.DELIVERY_PARTNER, UserRole.MANAGER] // Role-based access control
+    [UserRole.MANAGER] // Role-based access control
 );
 
 // Handle PUT request for updating user profile data

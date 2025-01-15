@@ -54,7 +54,21 @@ export const updateShipmentSchema = z.object({
     status: z.enum(Object.values(ShipmentStatus) as [ShipmentStatus]).optional()
 });
 
-// Update shipment schema
+
+// Update user schema
+export const updateUserSchema = z.object({
+    firstName: z.string().min(1, "First name is required").optional(),
+    lastName: z.string().min(1, "First name is required").optional(),
+    role: z.enum(Object.values(UserRole) as [UserRole]).optional()
+});
+
+// Update user schema
+export const updateProfileSchema = z.object({
+    firstName: z.string().min(1, "First name is required").optional(),
+    lastName: z.string().min(1, "Last name is required").optional(),
+});
+
+// Update shipment status schema
 export const updateShipmentStatusSchema = z.object({
     status: z.enum(Object.values(ShipmentStatus) as [ShipmentStatus]).optional()
 });

@@ -25,8 +25,7 @@ routeHandler.addRoute(
                     status: 404,
                 };
             }
-
-            // Strip sensitive data if needed
+            
             const sanitizedUser = {
                 uuid: matchedUser.uuid,
                 firstName: matchedUser.firstName,
