@@ -1,5 +1,5 @@
 
-import database from "@/app/config/database";
+import database from "@/config/database";
 import RouteHandler from "@/utils/route-handler";
 import { UserRole } from "@prisma/client";
 import { NextRequest } from "next/server";
@@ -12,7 +12,7 @@ routeHandler.addRoute(
     async (req: NextRequest, body, { }, authUser) => {
         try {
             const { userId } = authUser!;
-
+            
             // Validate and fetch user data
             const matchedUser = await database.users.findUnique({
                 where: { uuid: userId },
@@ -33,6 +33,7 @@ routeHandler.addRoute(
                 role: matchedUser.role,
                 createdAt: matchedUser.createdAt,
                 updatedAt: matchedUser.updatedAt,
+                isConfirmed: matchedUser.isConfirmed
             };
 
             return {

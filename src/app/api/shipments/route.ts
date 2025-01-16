@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import database from "@/app/config/database";
+import database from "@/config/database";
 import { stripSensitiveProperties } from "@/utils/helpers";
 import RouteHandler from "@/utils/route-handler";
 import { UserRole } from "@prisma/client";

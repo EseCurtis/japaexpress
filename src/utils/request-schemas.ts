@@ -9,7 +9,7 @@ export const registerUserSchema = z.object({
     lastName: z.string().min(1, "Last name is required"),
     email: z.string().email("Invalid email format"),
     password: z.string().min(8, "Password should have at least 8 characters"),
-    role: z.enum(Object.values(UserRole) as [UserRole])
+    //role: z.enum(Object.values(UserRole) as [UserRole])
 });
 
 // company register schema

@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import database from "@/app/config/database";
+import database from "@/config/database";
 import { sendEmail } from "@/utils/email-service";
 import { updateShipmentSchema } from "@/utils/request-schemas";
 import RouteHandler from "@/utils/route-handler";

@@ -1,5 +1,5 @@
 
-import database from "@/app/config/database";
+import database from "@/config/database";
 import { AuthUserType } from "@/types/base-types";
 import { loginSchema } from "@/utils/request-schemas";
 import RouteHandler from "@/utils/route-handler";

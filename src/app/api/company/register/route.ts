@@ -1,4 +1,4 @@
-import database from "@/app/config/database";
+import database from "@/config/database";
 import { sendEmail } from "@/utils/email-service";
 import { stripSensitiveProperties } from "@/utils/helpers";
 import { UserRole } from "@prisma/client";

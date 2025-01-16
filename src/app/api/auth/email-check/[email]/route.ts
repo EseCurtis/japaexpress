@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import database from "@/app/config/database";
+import database from "@/config/database";
 import RouteHandler from "@/utils/route-handler";
 import { NextRequest } from "next/server";
 import { z } from "zod";

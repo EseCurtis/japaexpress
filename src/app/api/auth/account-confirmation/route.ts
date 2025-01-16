@@ -1,5 +1,5 @@
 
-import database from "@/app/config/database";
+import database from "@/config/database";
 import { sendEmail } from "@/utils/email-service";
 import { confirmAccountSchema } from "@/utils/request-schemas";
 import RouteHandler from "@/utils/route-handler";

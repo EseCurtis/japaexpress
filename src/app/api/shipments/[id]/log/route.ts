@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import database from "@/app/config/database";
+import database from "@/config/database";
 import { locationUpdateSchema } from "@/utils/request-schemas";
 import RouteHandler from "@/utils/route-handler";
 import { UserRole } from "@prisma/client";

@@ -1,7 +1,7 @@
 "use client";
 
 import { BrandShowcase } from "@/components/portal/brand-showcase";
-import { LoginForm } from "@/components/portal/login-form";
+import { SignUpForm } from "@/components/portal/sign-up-form";
 
 export default function Home() {
   return (
@@ -11,7 +11,7 @@ export default function Home() {
       </div>
 
       <div className="col-span-1 h-full p-10 flex items-center">
-        <LoginForm />
+        <SignUpForm />
       </div>
     </div>
   );

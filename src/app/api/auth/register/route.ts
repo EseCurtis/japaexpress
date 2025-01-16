@@ -1,8 +1,9 @@
-import database from "@/app/config/database";
+import database from "@/config/database";
 import { sendEmail } from "@/utils/email-service";
 import { stripSensitiveProperties } from "@/utils/helpers";
 import { registerUserSchema } from "@/utils/request-schemas";
 import RouteHandler from "@/utils/route-handler";
+import { UserRole } from "@prisma/client";
 import bcrypt from "bcryptjs";
 import { NextRequest } from "next/server";
 
@@ -13,7 +14,7 @@ routeHandler.addRoute(
     registerUserSchema,
     async (req: NextRequest, body) => {
         try {
-            const { password, firstName, lastName, role, email } = body;
+            const { password, firstName, lastName, email } = body;
 
             // Check if the user already exists by email
             const existingUser = await database.users.findUnique({
@@ -35,7 +36,7 @@ routeHandler.addRoute(
                     firstName,
                     lastName,
                     email,
-                    role,
+                    role: UserRole.MANAGER,
                     passwordHash,
                 },
             });
