@@ -22,3 +22,25 @@ export function generateShipmentRecords(n: number) {
   return records;
 }
 
+
+export function generateShipmentLogRecords(n: number) {
+  const logs = [];
+
+  for (let i = 0; i < n; i++) {
+    const randomStatus = Object.values(ShipmentStatus);
+
+    const log = {
+      latitude: faker.address.latitude(),
+      longitude: faker.address.longitude(),
+      timestamp: faker.date.recent(), // Random date within the last few days
+      status: randomStatus[Math.floor(Math.random() * randomStatus.length)],
+      error: faker.datatype.boolean() ? faker.lorem.sentence() : "", // Random error or empty string
+      createdAt: faker.date.recent(),
+      updatedAt: faker.date.recent(),
+    };
+
+    logs.push(log);
+  }
+
+  return logs;
+}

@@ -21,9 +21,7 @@ routeHandler.addRoute(
             const offset = (page - 1) * limit;
 
             // Filters
-            const statuses = searchParams.get("statuses")?.split(",") || []; // Comma-separated statuses
-            const driversEmail = searchParams.get("driversEmail") || undefined;
-            const customersEmail = searchParams.get("customersEmail") || undefined;
+            const statuses = searchParams.get("statuses")?.split(",") || [];
             const search = searchParams.get("search") || ""; // Search query
             const dateFrom = searchParams.get("dateFrom") || ""; // Start date
             const dateTo = searchParams.get("dateTo") || ""; // End date
@@ -31,9 +29,7 @@ routeHandler.addRoute(
             // Build the `where` condition for Prisma
             const where: any = {
                 companyId: companyId!, // Filter by company ID
-                ...(statuses.length > 0 && { status: { in: statuses } }), // Filter by statuses
-                ...(driversEmail && { driversEmail: driversEmail }), // Filter by delivery partner
-                ...(customersEmail && { customersEmail }), // Filter by customer ID
+                ...(statuses.length > 0 && { status: { in: statuses } }), // Filter by st
                 ...(search && {
                     OR: [
                         { customersEmail: { contains: search, mode: "insensitive" } },
@@ -52,7 +48,7 @@ routeHandler.addRoute(
             };
 
             // Fetch the filtered shipments
-            const shipments = await database.shipments.findMany({
+            const shipmentLogs = await database.shipmentLogs.findMany({
                 skip: offset,
                 take: limit,
                 orderBy: { createdAt: "desc" }, // Sort by creation date
@@ -60,20 +56,20 @@ routeHandler.addRoute(
             });
 
             // Count total shipments for pagination metadata
-            const totalShipments = await database.shipments.count({ where });
+            const totalShipmentLogs = await database.shipmentLogs.count({ where });
 
             // Calculate total pages
-            const totalPages = Math.ceil(totalShipments / limit);
+            const totalPages = Math.ceil(totalShipmentLogs / limit);
 
             return {
                 msg: "Shipments retrieved successfully",
-                data: shipments.map((shipment) =>
-                    stripSensitiveProperties(shipment, ["id"]) // Strip sensitive properties
+                data: shipmentLogs.map((shipmentLog) =>
+                    stripSensitiveProperties(shipmentLog, ["id"]) // Strip sensitive properties
                 ),
                 pagination: {
                     currentPage: page,
                     totalPages,
-                    totalItems: totalShipments,
+                    totalItems: totalShipmentLogs,
                     hasNextPage: page < totalPages,
                     nextPage: page < totalPages ? page + 1 : null,
                     hasPreviousPage: page > 1,

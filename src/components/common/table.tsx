@@ -66,7 +66,7 @@ export function TableDefault({
         {loader || (
           <div className="w-full text-xs flex items-center justify-center gap-3">
             <Spinner
-              className="w-5 h-5"
+              className="w-5 h-5 "
               onPointerEnterCapture
               onPointerLeaveCapture
             />
@@ -107,7 +107,7 @@ export function TableDefault({
           </tr>
         </thead>
 
-        {mainTableData.length > 0 ? (
+        {(mainTableData.length > 0) ? (
           <tbody
             style={{
               opacity: (isLoading && 0.5) || undefined

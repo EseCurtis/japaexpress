@@ -1,6 +1,6 @@
 
 import database from "@/config/database";
-import { generateShipmentRecords } from "@/tests";
+import { generateShipmentLogRecords, generateShipmentRecords } from "@/tests";
 import RouteHandler from "@/utils/route-handler";
 import { UserRole } from "@prisma/client";
 import { NextRequest } from "next/server";
@@ -15,9 +15,14 @@ routeHandler.addRoute(
             const { userId, companyId } = authUser!;
 
             const fakeRecords = generateShipmentRecords(20);
+            const fakeLogs = generateShipmentLogRecords(20);
 
-            const populated = await database.shipments.createMany({
-                data: [...fakeRecords.map(record => ({ ...record, companyId: companyId!, managerId: userId }))]
+            // const populated = await database.shipments.createMany({
+            //     data: [...fakeRecords.map(record => ({ ...record, companyId: companyId!, managerId: userId }))]
+            // })
+
+            const populated = await database.shipmentLogs.createMany({
+                data: [...fakeLogs.map(record => ({ ...record, companyId: companyId!, shipmentId: "fdcaee5c-ed0b-45b3-9bd8-312abc536aae" }))]
             })
 
             return {
@@ -38,5 +43,5 @@ routeHandler.addRoute(
 
 // Handle GET request for retrieving user bio data
 export async function GET(req: NextRequest) {
-    return routeHandler.handle(req);
+    return routeHandler.handle(req, );
 }

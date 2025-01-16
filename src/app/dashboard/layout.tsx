@@ -21,7 +21,7 @@ export default function Layout({ children }: { children: ReactNode }) {
           <div className="col-span-1">
             <SideBar />
           </div>
-          <div className="col-span-4   px-5 ">
+          <div className="col-span-4   px-5 h-dvh overflow-y-scroll">
             <div className="w-full py-3 items-center justify-between flex h-[70px]">
               <BreadcrumbsDefault />
               <div className="bg-blue-gray-50  p-3 rounded-full">
