@@ -15,7 +15,8 @@ export default withMT({
       colors: {
         background: "var(--background)",
         foreground: "var(--foreground)",
-        accent: "#DB3B17"
+        accent: "#DB3B17",
+        "space-black": "#161620"
       },
     },
   },

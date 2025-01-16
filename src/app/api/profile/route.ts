@@ -1,5 +1,6 @@
 
 import database from "@/config/database";
+import { stripSensitiveProperties } from "@/utils/helpers";
 import RouteHandler from "@/utils/route-handler";
 import { UserRole } from "@prisma/client";
 import { NextRequest } from "next/server";
@@ -11,11 +12,14 @@ routeHandler.addRoute(
     z.object({}),
     async (req: NextRequest, body, { }, authUser) => {
         try {
-            const { userId } = authUser!;
-            
+            const { userId, companyId } = authUser!;
+
             // Validate and fetch user data
             const matchedUser = await database.users.findUnique({
                 where: { uuid: userId },
+                include: {
+                    company: true
+                }
             });
 
             if (!matchedUser) {
@@ -33,7 +37,9 @@ routeHandler.addRoute(
                 role: matchedUser.role,
                 createdAt: matchedUser.createdAt,
                 updatedAt: matchedUser.updatedAt,
-                isConfirmed: matchedUser.isConfirmed
+                isConfirmed: matchedUser.isConfirmed,
+                company: stripSensitiveProperties(matchedUser.company!, ["id"]),
+                companyId
             };
 
             return {

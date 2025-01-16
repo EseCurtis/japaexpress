@@ -41,6 +41,8 @@ routeHandler.addRoute(
                 }),
             };
 
+            console.log("WHERE", where);
+
             // Fetch the filtered shipments
             const shipments = await database.shipments.findMany({
                 skip: offset,
@@ -65,6 +67,7 @@ routeHandler.addRoute(
                     totalPages,
                     totalItems: totalShipments,
                     hasNextPage: page < totalPages,
+                    nextPage: page < totalPages ? page + 1 : null,
                     hasPreviousPage: page > 1,
                 },
             };

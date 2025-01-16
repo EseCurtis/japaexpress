@@ -54,10 +54,17 @@ routeHandler.addRoute(
             { expiresIn: "24h" }
         );
 
+        // Generate a JWT token
+        const refreshToken = jwt.sign(
+            authUser,
+            process.env.JWT_SECRET || "NO_JWT",
+            { expiresIn: "1w" }
+        );
+
         // Return a success response with the JWT token
         return {
             msg: "User logged in successfully",
-            data: { token, user: authUser }
+            data: { token, refreshToken, user: authUser }
         };
     }
 );

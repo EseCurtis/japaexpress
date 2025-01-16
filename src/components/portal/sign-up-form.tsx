@@ -60,7 +60,7 @@ export function SignUpForm() {
         <h1 className="text-3xl font-bold text-left">Create an Account</h1>
         <p className="text-sm">
           Already have an account?{" "}
-          <Link href="/login" className="underline">
+          <Link href="/" className="underline">
             Login
           </Link>
           .

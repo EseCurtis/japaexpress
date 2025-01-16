@@ -25,6 +25,9 @@ class RouteHandler {
     // Middleware to check authentication and authorization
     private async authenticate(req: NextRequest) {
         const token = req.headers.get("Authorization")?.replace("Bearer ", "");
+
+       
+        
         if (!token) {
             throw new Error("Unauthorized");
         }

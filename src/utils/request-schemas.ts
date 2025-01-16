@@ -25,6 +25,13 @@ export const loginSchema = z.object({
     password: z.string().min(8, "Password should have at least 8 characters"),
 });
 
+
+// refresh token schema
+export const refreshTokenSchema = z.object({
+    refreshToken: z.string().min(20, "Invalid refresh token format"),
+});
+
+
 // request confirmation schema
 export const requestConfirmationSchema = z.object({
     email: z.string().email("Invalid email format"),
@@ -60,7 +67,7 @@ export const updateShipmentSchema = z.object({
     deliveryAddress: z.string().optional(),
     customerEmail: z.string().email("Invalid customer ID format").optional(),
     description: z.string().min(10, "Description length must be greater than 10 characters ").optional(),
-    driverEmail:  z.string().email("Invalid customer ID format").optional(),
+    driverEmail: z.string().email("Invalid customer ID format").optional(),
     status: z.enum(Object.values(ShipmentStatus) as [ShipmentStatus]).optional()
 });
 

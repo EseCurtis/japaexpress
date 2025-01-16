@@ -45,6 +45,11 @@ routeHandler.addRoute(
 
             return {
                 msg: "Confirmation OTP sent successfully. Please check your email.",
+                data: {
+                    user: {
+                        requestedConfirmation: true
+                    }
+                },
                 status: 200,
             };
         } catch (error) {

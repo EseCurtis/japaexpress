@@ -13,6 +13,8 @@ interface AuthContextType {
   isError: boolean;
   login: (email: string, password: string) => Promise<void>;
   logout: (callback?: () => void) => Promise<void>;
+  getToken: () => string;
+  refreshAccessToken: () => Promise<any>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -36,10 +38,11 @@ export function AuthProvider({ children }: AuthProviderProps) {
         email,
         password
       })) as any;
-      return data.data as { token: string; user: any };
+      return data.data as { token: string; refreshToken: string; user: any };
     },
     onSuccess: (data) => {
       localStorage.setItem("token", data.token);
+      localStorage.setItem("refreshToken", data.refreshToken);
       queryClient.setQueryData(["user"], data.user);
     },
     onError: (error: any) => {
@@ -53,6 +56,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
   const logoutMutation = useMutation({
     mutationFn: async () => {
       localStorage.removeItem("token");
+      localStorage.removeItem("refreshToken");
       await queryClient.invalidateQueries({ queryKey: ["user"] });
     }
   });
@@ -68,6 +72,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
       const { data } = (await axios.get<{ user: any }>("/api/profile", {
         headers: { Authorization: `Bearer ${token}` }
       })) as any;
+
       return data.data;
     },
     queryKey: ["user"],
@@ -81,11 +86,46 @@ export function AuthProvider({ children }: AuthProviderProps) {
   const logout = async (callback = () => {}) => {
     await logoutMutation.mutateAsync();
 
-    callback()
+    callback();
+  };
+
+  const getToken = () => {
+    return localStorage.getItem("token")!;
+  };
+
+  const refreshAccessToken = async () => {
+    const refreshToken = localStorage.getItem("refreshToken");
+    if (!refreshToken) throw new Error("No refresh token found");
+
+    try {
+      const { data } = (await apiClient.post("/api/auth/refresh-token", {
+        refreshToken
+      })) as any;
+
+      localStorage.setItem("token", data.data.token);
+      await queryClient.invalidateQueries({ queryKey: ["user"] });
+      return data.token;
+    } catch (error: any) {
+      console.error(
+        "Token refresh failed:",
+        error.response?.data?.msg || "Unknown error"
+      );
+      throw error;
+    }
   };
 
   return (
-    <AuthContext.Provider value={{ user, isLoading, isError, login, logout }}>
+    <AuthContext.Provider
+      value={{
+        user,
+        isLoading,
+        isError,
+        login,
+        logout,
+        getToken,
+        refreshAccessToken
+      }}
+    >
       {children}
     </AuthContext.Provider>
   );

@@ -1,24 +1,27 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/ban-ts-comment */
-import { Button, Spinner } from "@material-tailwind/react";
-import { FC, ReactNode } from "react";
+import { Button, ButtonProps, Spinner } from "@material-tailwind/react";
+import { ReactNode } from "react";
 
-interface ButtonDefaultProps {
+type ButtonDefaultProps = ButtonProps & {
   children: ReactNode;
   icon?: ReactNode;
   loading?: boolean;
   disabled?: boolean;
   onClick?: () => void;
   type?: "button" | "submit" | "reset" | undefined;
-}
+  [key: string]: any; // Add this line to allow rest props
+};
 
-export const ButtonDefault: FC<ButtonDefaultProps> = ({
+export function ButtonDefault({
   children,
   icon,
   loading = false,
   disabled = false,
   onClick,
-  type
-}) => {
+  type,
+  ...rest // Add this line to capture rest props
+}: ButtonDefaultProps) {
   return (
     //@ts-ignore
     <Button
@@ -28,6 +31,7 @@ export const ButtonDefault: FC<ButtonDefaultProps> = ({
       placeholder=""
       variant="filled"
       type={type}
+      {...rest} // Spread rest props here
     >
       <div className="flex items-center w-full">
         <div className="mx-auto">{children}</div>
@@ -40,4 +44,4 @@ export const ButtonDefault: FC<ButtonDefaultProps> = ({
       </div>
     </Button>
   );
-};
+}
